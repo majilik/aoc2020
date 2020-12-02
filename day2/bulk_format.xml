@@ -3,7 +3,7 @@
  <RECORD>  
   <FIELD ID="1" xsi:type="CharTerm" TERMINATOR="-"/>  
   <FIELD ID="2" xsi:type="CharTerm" TERMINATOR=" "/>  
-  <FIELD ID="3" xsi:type="CharTerm" TERMINATOR=": "/>  
+  <FIELD ID="3" xsi:type="CharTerm" TERMINATOR=":"/>  
   <FIELD ID="4" xsi:type="CharTerm" TERMINATOR="\n"/>  
  </RECORD>  
  <ROW>  
