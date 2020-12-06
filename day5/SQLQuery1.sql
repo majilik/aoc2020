@@ -70,5 +70,24 @@ FROM (
 	FROM @BoardingPass x
 ) y
 
+-- Part 2
+;WITH SeatIDs([SeatID]) AS (
+	SELECT [Row] * 8 + [Column]
+	FROM (
+		SELECT 
+			RowNumber,
+			dbo.udfBinarySearch('B', 'F', 127, 0, x.RowBSP) AS [Row], 
+			dbo.udfBinarySearch('R', 'L', 7, 0, x.ColumnBSP) AS [Column]
+		FROM @BoardingPass x
+	) y
+)
+SELECT PreviousSeatID + 1 AS 'MySeat'
+FROM (
+	SELECT SeatID, LAG(SeatID) OVER (ORDER BY SeatID) AS 'PreviousSeatID'
+	FROM SeatIDs
+) x
+WHERE PreviousSeatID IS NOT NULL
+AND SeatID <> PreviousSeatID + 1
+
 -- Cleanup
 DROP FUNCTION udfBinarySearch
