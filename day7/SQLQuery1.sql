@@ -111,6 +111,23 @@ WHERE b.Color = 'shiny gold'
 SELECT COUNT(DISTINCT BagID) AS 'BagCount'
 FROM cte_rec
 
+-- Part 2
+-- Get all descendants from shiny gold bag, directly and indirectly, with quantities
+;WITH cte_rec(ParentBagID, BagID, Quantity) AS (
+	SELECT BagID, HoldingBagID, Quantity
+	FROM @BagContents bc
+	WHERE BagID = @ShinyGoldBagID
+
+	UNION ALL
+
+	SELECT a.BagID, b.HoldingBagID, b.Quantity * a.Quantity
+	FROM cte_rec a
+	JOIN @BagContents b ON a.BagID = b.BagID
+)
+
+SELECT SUM(Quantity) AS 'BagCount'
+FROM cte_rec
+
 -- Cleanup
 DROP FUNCTION dbo.udfGetQuantity
 DROP FUNCTION dbo.udfGetBagColor
