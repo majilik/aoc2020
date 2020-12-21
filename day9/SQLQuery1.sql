@@ -11,6 +11,7 @@ FROM OPENROWSET (
 ) AS b;
 
 DECLARE @N AS INT = 25
+DECLARE @Number AS BIGINT
 
 -- Queries
 -- Part 1
@@ -24,10 +25,38 @@ DECLARE @N AS INT = 25
 	AND a.LineNumber > @N
 )
 
-SELECT Number
+SELECT @Number = Number
 FROM @Input x
 WHERE x.LineNumber NOT IN (
 	SELECT LineNumber
 	FROM HasSumInNBefore
 )
 AND x.LineNumber > @N
+
+SELECT @Number AS 'Answer 1'
+
+-- Part 2
+DECLARE @CurrentStartLine INT = 1
+DECLARE @EndLine INT
+
+WHILE (1=1)
+BEGIN
+	;WITH RunningTotal AS (
+		SELECT LineNumber, Number, SUM(Number) OVER (ORDER BY LineNumber) AS 'Total'
+		FROM @Input
+		WHERE LineNumber >= @CurrentStartLine
+	)
+	
+	SELECT @EndLine = LineNumber
+	FROM RunningTotal
+	WHERE Total = @Number
+
+	IF (@EndLine IS NOT NULL)
+		BREAK
+	ELSE
+		SET @CurrentStartLine = @CurrentStartLine + 1
+END
+
+SELECT MIN(Number) + MAX(Number) AS 'Answer 2'
+FROM @Input
+WHERE LineNumber BETWEEN @CurrentStartLine AND @EndLine
